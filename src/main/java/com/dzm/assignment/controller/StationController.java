@@ -1,7 +1,9 @@
 package com.dzm.assignment.controller;
 
 
+import com.dzm.assignment.data.dto.request.NearestStationRequestDto;
 import com.dzm.assignment.data.dto.station.CreateStationDto;
+import com.dzm.assignment.data.dto.station.NearestStationDto;
 import com.dzm.assignment.data.dto.station.StationDto;
 import com.dzm.assignment.data.dto.station.UpdateStationDto;
 import com.dzm.assignment.service.StationService;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/stations")
@@ -53,5 +56,15 @@ public class StationController {
     public ResponseEntity<Void> deleteStation(@PathVariable Long id) {
         stationService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/nearest")
+    public ResponseEntity<List<NearestStationDto>> getAllNearestStations(@RequestParam(required = false) Long companyId,
+                                                                         @RequestParam double latitude,
+                                                                         @RequestParam double longitude,
+                                                                         @RequestParam double radius) {
+        List<NearestStationDto> nearestStationDtoList = stationService.findNearestStations(new NearestStationRequestDto(companyId, latitude, longitude, radius));
+        return ResponseEntity.ok()
+                .body(nearestStationDtoList);
     }
 }
