@@ -1,11 +1,14 @@
 package com.dzm.assignment.service;
 
+import com.dzm.assignment.data.model.Company;
 import com.dzm.assignment.exception.NotFoundException;
 import com.dzm.assignment.mapper.BaseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public abstract class BaseService<E, R extends org.springframework.data.jpa.repository.JpaRepository<E, Long>, CD, UD, D, M extends BaseMapper<CD, UD, D, E>> {
@@ -44,5 +47,13 @@ public abstract class BaseService<E, R extends org.springframework.data.jpa.repo
     public Page<D> findAll(Pageable pageable) {
         Page<D> res = repository.findAll(pageable).map(mapper::toDto);
         return res;
+    }
+
+    public List<Company> loadAllCompanyChild(Company ancestor, List<Company> allAncestors) {
+        allAncestors.add(ancestor);
+        if (!ancestor.getChildren().isEmpty()) {
+            ancestor.getChildren().stream().forEach(company -> loadAllCompanyChild(company, allAncestors));
+        }
+        return allAncestors;
     }
 }

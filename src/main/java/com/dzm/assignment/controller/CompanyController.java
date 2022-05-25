@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/companies")
@@ -53,5 +54,12 @@ public class CompanyController {
     public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
         companyService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/child/")
+    public ResponseEntity<List<CompanyDto>> getAllCompaniesWithChild(@PathVariable Long id) {
+        List<CompanyDto> companiesWithChild = companyService.findAllWithChild(id);
+        return ResponseEntity.ok()
+                .body(companiesWithChild);
     }
 }
